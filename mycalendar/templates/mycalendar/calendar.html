@@ -1,0 +1,40 @@
+{% extends "mycalendar/layout.html" %}
+{% load static %}
+
+{% block navbar %}
+    <div class="navbar">
+    <h1>Welcome {{ request.user.username }} to Your Calendar</h1>
+
+    <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
+</div>
+<hr>
+{% endblock navbar %}
+
+{% block body %}
+    <div class="container">
+    <div class="left">
+        <div class="calendar">
+            <div class="month">
+                <i class="fa fa-angle-left prev"></i>
+                <div class="date">
+                    <h1></h1>
+                    <p></p>
+                <i class="fa fa-angle-right next"></i>
+            </div>
+            <div class="weekdays">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'mycalendar/script.js' %}"></script>
+{% endblock %}
