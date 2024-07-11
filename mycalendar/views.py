@@ -30,9 +30,7 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return render(request, "mycalendar/login.html", {
-        "message": "Logged out."
-    })
+    return HttpResponseRedirect(reverse("index"))
 
 def register(request):
     if request.method == "POST":
