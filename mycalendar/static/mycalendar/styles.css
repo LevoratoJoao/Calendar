@@ -131,7 +131,7 @@
 
 .calendar .days .day:not(.prev-date, .next-date):hover {
     color: #070707;
-    background-color: var(--primary-clr);
+    background-color: #dddddd;
     border: 1px solid #686868;
 }
 
@@ -241,6 +241,179 @@
     border-radius: 0;
 }
 
-textarea {
-    min-height: 400px;
+.container .right {
+    position: relative;
+    width: 40%;
+    min-height: 100%;
+    padding: 20px 0;
+}
+
+.right .today-date {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 40px;
+    padding-left: 70px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    text-transform: capitalize;
+}
+
+.today-date .event-day {
+    font-size: 2rem;
+    font-weight: 500;
+}
+
+.right .today-date .event-date {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #bfc0cf;
+}
+
+.events {
+    width: 100%;
+    height: 100%;
+    max-height: 600px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding-left: 4px;
+}
+
+.events .event {
+    position: relative;
+    width: 95%;
+    min-height: 70px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    column-gap: 5px;
+    padding: 0 20px;
+    padding-left: 50px;
+    color: #fff;
+    background: linear-gradient(90deg, #4c4f5a, transparent);
+    cursor: pointer;
+}
+
+.events .event:nth-child(even) {
+    background: linear-gradient(90deg, #5a5e6b, transparent);
+}
+
+.events .event:hover {
+    background: linear-gradient(90deg, #dad9d9, transparent);
+    ;
+    color: #333333;
+}
+
+.events .event .title {
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.events .event .title .event-title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-left: 20px;
+}
+
+.events .event i {
+    color: #fff;
+    font-size: 0.5rem;
+}
+
+.events .event:hover i {
+    color: #333333;
+}
+
+.events .event .event-time {
+    font-weight: 400;
+    color: #a2a3b4;
+    margin-left: 15px;
+    pointer-events: none;
+}
+
+.events .event:hover .event-time {
+    color: #fff;
+}
+
+.events .event::after {
+    content: "\f054";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    font-size: 1.4rem;
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.3;
+    color: var(--primary-clr);
+    transform: translateY(-50%);
+    width: 25px;
+    height: 25px;
+    /* background-color: #fff; */
+    border: 2px solid var(--primary-clr);
+    text-align: center;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    content: "\f00d";
+}
+
+.events .event:hover::after {
+    display: flex;
+}
+
+.login-body {
+    margin-top: 30px;
+    textarea {
+        min-height: 400px;
+    }
+
+    h2 {
+        text-align: center;
+    }
+
+    form {
+        width: 300px;
+        margin: 0 auto;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    input[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+
+    a {
+        color: #007bff;
+    }
+
+    a:hover {
+        color: #0056b3;
+    }
+
+    p {
+        text-align: center;
+    }
 }
