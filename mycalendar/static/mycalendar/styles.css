@@ -1,6 +1,6 @@
 :root {
     --primary-clr: #b9b6bd;
-  }
+}
 
 * {
     margin: 0;
@@ -124,7 +124,8 @@
     /* align-items: center; */
     justify-content: center;
     cursor: pointer;
-    color: #474646; /* var(--primary-clr); */
+    color: #474646;
+    /* var(--primary-clr); */
     border: 1px solid #e2e2e2;
 }
 
@@ -154,6 +155,90 @@
     width: 100%;
     height: 100%;
     box-shadow: 0 0 10px 2px var(--primary-clr);
+}
+
+.calendar .days .today {
+    font-size: 2rem;
+}
+
+.calendar .days .event {
+    position: relative;
+}
+
+.calendar .days .event::after {
+    content: "";
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    width: 75%;
+    height: 6px;
+    border-radius: 30px;
+    transform: translateX(-50%);
+    background-color: var(--primary-clr);
+}
+
+.calendar .days .day:hover.event::after {
+    background-color: #fff;
+}
+
+.calendar .days .active.event::after {
+    background-color: #fff;
+    bottom: 20%;
+}
+
+.calendar .days .active.event {
+    padding-bottom: 10px;
+}
+
+.calendar .goto-today {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 0 20px;
+    margin-bottom: 10px;
+    color: #474646;
+}
+
+.calendar .goto-today .goto {
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 1px solid var(--primary-clr);
+}
+
+.calendar .goto-today .goto input {
+    width: 100%;
+    height: 30px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: #474646;
+    border-radius: 5px;
+}
+
+.calendar .goto-today button {
+    padding: 5px 10px;
+    border: 1px solid var(--primary-clr);
+    border-radius: 5px;
+    background-color: transparent;
+    cursor: pointer;
+    color: #474646;
+}
+
+.calendar .goto-today button:hover {
+    color: #fff;
+    background-color: var(--primary-clr);
+}
+
+.calendar .goto-today .goto button {
+    border: none;
+    border-left: 1px solid var(--primary-clr);
+    border-radius: 0;
 }
 
 textarea {
