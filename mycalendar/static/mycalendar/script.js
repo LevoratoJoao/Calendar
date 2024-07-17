@@ -6,6 +6,9 @@ const next = document.querySelector(".next");
 const todayBtn = document.querySelector(".today-btn");
 const gotoBtn = document.querySelector(".goto-btn");
 const dateInput = document.querySelector(".date-input");
+const eventDay = document.querySelector(".event-day");
+const eventDate = document.querySelector(".event-date");
+const eventsContainer = document.querySelector(".events");
 
 let today = new Date();
 let activeDay;
@@ -14,6 +17,26 @@ let year = today.getFullYear();
 
 const months = [
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+];
+
+const eventsArray = [
+    {
+        day: 1,
+        month: 7,
+        year: 2024,
+        events: [
+            {
+                title: "Event 1",
+                time: "10:00",
+                description: "Description 1"
+            },
+            {
+                title: "Event 2",
+                time: "12:00",
+                description: "Description 2"
+            }
+        ]
+    }
 ];
 
 // Function to get the number of days in a month
@@ -41,16 +64,28 @@ function initCalendar() { // Function to initialize the calendar
 
     // Add the previous month days
     for (let i = day; i > 0; i--) {
-        days += `<div class="day prev-date"> ${prevDays - i + 1}</div>`;
+        days += `<div class="day prev-date">${prevDays - i + 1}</div>`;
     }
 
     // Add the current month days
     for (let i = 1; i <= lastDate; i++){
+        // Check if the day has an event
+        let event = false;
+        eventsArray.forEach((eventObj) => {
+            if (eventObj.day === i && eventObj.month === month + 1 && eventObj.year === year) {
+                event = true;
+            }
+        });
         // Check if the day is today
         if (i === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth()) {
-            days += `<div class="day today">${i}</div>`;
+
+            activeDay = i;
+            getActiveDay(i);
+            updateEvents(i);
+
+            days += `<div class="day today active ${event ? "event" : ""}">${i}</div>`;
         } else {
-            days += `<div class="day">${i}</div>`;
+            days += `<div class="day ${event ? "event" : ""}">${i}</div>`;
         }
     }
 
@@ -60,6 +95,7 @@ function initCalendar() { // Function to initialize the calendar
     }
 
     daysContainer.innerHTML = days;
+    addListener();
 }
 
 initCalendar();
@@ -128,4 +164,137 @@ function gotoDate() {
         }
     }
     alert("Invalid date");
+}
+
+// Add event
+const addEventBtn = document.querySelector(".add-event");
+const addEventContainer = document.querySelector(".add-event-wrapper");
+const addEventCloseBtn = document.querySelector(".close");
+const addEventTitle = document.querySelector(".event-name")
+const addEventTime = document.querySelector(".event-time")
+const addEventDesc = document.querySelector(".event-description")
+
+
+addEventBtn.addEventListener("click", () => { // Show the add event container
+    addEventContainer.classList.toggle("active");
+});
+
+addEventCloseBtn.addEventListener("click", () => { // Close the add event container
+    addEventContainer.classList.remove("active");
+});
+
+document.addEventListener("click", (e) => { // Close the add event container if the user clicks outside it
+    if (e.target !== addEventBtn && !addEventContainer.contains(e.target)) {
+        addEventContainer.classList.remove("active");
+    }
+});
+
+addEventTitle.addEventListener("input", (e) => { // Limit the title to 50 characters
+    addEventTitle.value = addEventTitle.value.slice(0, 50);
+});
+
+addEventTime.addEventListener("input", (e) => { // Allow only numbers and slashes
+    addEventTime.value = addEventTime.value.replace(/[^0-9:]/g, "");
+    if (addEventTime.value.length === 2) {
+        addEventTime.value += ":"; // Add a colon after the second number
+    }
+    if (addEventTime.value.length > 5) {
+        addEventTime.value = addEventTime.value.slice(0, 5); // Limit the input to 5 characters
+    }
+    if (e.inputType === "deleteContentBackward") {
+        if (addEventTime.value.length === 3) {
+            addEventTime.value = addEventTime.value.slice(0, 2); // Remove the colon if the user deletes the third character
+        }
+    }
+    if (addEventTime.value.length === 3 && !addEventTime.value.includes(":")) { // If the user types a number after the second number
+        addEventTime.value = addEventTime.value.slice(0, 2) + ":" + addEventTime.value.slice(2); // Add a colon after the second number
+    }
+});
+
+// Listener on days
+function addListener() {
+    const days = document.querySelectorAll(".day");
+    days.forEach((day) => {
+        day.addEventListener("click", (e) => { // Show the active day events
+            activeDay = Number(e.target.innerHTML);
+            getActiveDay(e.target.innerHTML);
+            updateEvents(Number(e.target.innerHTML));
+
+            days.forEach((day) => {
+                day.classList.remove("active");
+            });
+
+            if (e.target.classList.contains("prev-date")) { // If the day is from the previous month
+                prevMonth();
+
+                setTimeout(() => {
+                    const days = document.querySelectorAll(".day");
+
+                    days.forEach((day) => {
+                        if (!day.classList.contains("prev-date") && day.innerHTML === e.target.innerHTML) {
+                            day.classList.add("active");
+                        }
+                    });
+                }, 100);
+
+            } else if (e.target.classList.contains("next-date")) { // If the day is from the next month
+                nextMonth();
+
+                setTimeout(() => {
+                    const days = document.querySelectorAll(".day");
+
+                    days.forEach((day) => {
+                        if (!day.classList.contains("next-date") && day.innerHTML === e.target.innerHTML) {
+                            day.classList.add("active");
+                        }
+                    });
+                }, 100);
+
+            } else {
+                e.target.classList.add("active");
+            }
+        });
+    });
+}
+
+// Show date and day of the active day
+function getActiveDay(date) {
+    const day = new Date(year, month, date);
+    const dayName = day.toString().split(" ")[0];
+
+    eventDay.innerHTML = dayName;
+    eventDate.innerHTML = date + " " + months[month] + " " + year;
+}
+
+// Show the events of the active day
+function updateEvents(date) {
+    let events = "";
+    eventsArray.forEach((event) => {
+        if (date === event.day && month + 1 === event.month && year === event.year) {
+            event.events.forEach((event) => {
+                events += `
+                <div class="event">
+                    <div class="title">
+                        <i class="fas fa-circle"></i>
+                        <h3 class="event-title">${event.title}</h3>
+                    </div>
+                    <div class="evnet-desc">
+                        <span class="event-desc">${event.description}</span>
+                    </div>
+                    <div class="event-time">
+                        <span class="event-time">${event.time}</span>
+                    </div>
+                </div>`;
+            });
+        }
+    });
+
+    if (events === "") {
+        events = `
+        <div class="no-event">
+            <h3>No events</h3>
+        </div>`;
+    }
+
+    eventsContainer.innerHTML = events;
 }
