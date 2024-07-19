@@ -6,21 +6,46 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     pass
 
+class Date(models.Model):
+    day = models.IntegerField(default=0)
+    month = models.IntegerField(default=0)
+    year = models.IntegerField(default=0)
+    events = models.ForeignKey("Event", on_delete=models.CASCADE, related_name="dates", null=True)
+
+    def __str__(self):
+        return f"{self.day}/{self.month}/{self.year} - {self.event} - {self.event.user.username}"
+
+    def serializeAllEvents(self):
+        events = []
+        for event in self.events:
+            aux = event.serialize()
+            events.append(aux)
+        return events
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "day": self.day,
+            "month": self.month,
+            "year": self.year,
+            "events": [self.events.serialize()]
+        }
+
 class Event(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="events")
     title = models.CharField(max_length=100)
+    time = models.TimeField(default="00:00")
     description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.title} - {self.user.username} - {self.created_at} - {self.completed}"
+        return f"{self.title} - {self.user.username} - {self.completed}"
 
     def serialize(self):
         return {
             "id": self.id,
             "title": self.title,
+            "time": self.time.strftime("%H:%M"),
             "description": self.description,
-            "created_at": self.created_at.strftime("%b %d %Y, %I:%M %p"),
             "completed": self.completed
         }

@@ -9,6 +9,18 @@ const dateInput = document.querySelector(".date-input");
 const eventDay = document.querySelector(".event-day");
 const eventDate = document.querySelector(".event-date");
 const eventsContainer = document.querySelector(".events");
+const addEventSubmit = document.querySelector(".add-event-btn");
+const addEventDate = document.querySelector(".input-event-date");
+
+//const eventsDataElement = document.getElementById('events-data');
+//console.log(eventsDataElement.innerHTML.length);
+
+// if (eventsDataElement.innerHTML.length === 0) {
+//     const eventsArray = [];
+// } else {
+//     const eventsArray = JSON.parse(eventsDataElement.textContent);
+//     console.log(eventsArray);
+// }
 
 let today = new Date();
 let activeDay;
@@ -19,25 +31,25 @@ const months = [
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 ];
 
-const eventsArray = [
-    {
-        day: 1,
-        month: 7,
-        year: 2024,
-        events: [
-            {
-                title: "Event 1",
-                time: "10:00",
-                description: "Description 1"
-            },
-            {
-                title: "Event 2",
-                time: "12:00",
-                description: "Description 2"
-            }
-        ]
-    }
-];
+// const eventsArray = [
+//     {
+//         day: 1,
+//         month: 7,
+//         year: 2024,
+//         events: [
+//             {
+//                 title: "Event 1",
+//                 time: "10:00",
+//                 description: "Description 1"
+//             },
+//             {
+//                 title: "Event 2",
+//                 time: "12:00",
+//                 description: "Description 2"
+//             }
+//         ]
+//     }
+// ];
 
 // Function to get the number of days in a month
 // function getDaysInMonth(month, year) {
@@ -45,6 +57,8 @@ const eventsArray = [
 // }
 
 function initCalendar() { // Function to initialize the calendar
+    console.log(eventsArray);
+
     // Set the date
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -170,12 +184,16 @@ function gotoDate() {
 const addEventBtn = document.querySelector(".add-event");
 const addEventContainer = document.querySelector(".add-event-wrapper");
 const addEventCloseBtn = document.querySelector(".close");
-const addEventTitle = document.querySelector(".event-name")
-const addEventTime = document.querySelector(".event-time")
-const addEventDesc = document.querySelector(".event-description")
+const addEventTitle = document.querySelector(".input-event-name");
+const addEventTime = document.querySelector(".input-event-time");
+const addEventDesc = document.querySelector(".input-event-desc");
 
 
 addEventBtn.addEventListener("click", () => { // Show the add event container
+    addEventTitle.value = "";
+    addEventTime.value = "";
+    addEventDesc.value = "";
+    addEventDate.setAttribute('value',`${activeDay}/${month + 1}/${year}`);
     addEventContainer.classList.toggle("active");
 });
 
@@ -278,7 +296,7 @@ function updateEvents(date) {
                         <i class="fas fa-circle"></i>
                         <h3 class="event-title">${event.title}</h3>
                     </div>
-                    <div class="evnet-desc">
+                    <div class="event-desc">
                         <span class="event-desc">${event.description}</span>
                     </div>
                     <div class="event-time">
@@ -295,6 +313,22 @@ function updateEvents(date) {
             <h3>No events</h3>
         </div>`;
     }
-
     eventsContainer.innerHTML = events;
 }
+
+addEventSubmit.addEventListener("click", () => {
+    const eventTitle = addEventTitle.value;
+    const eventTime = addEventTime.value;
+    const eventDesc = addEventDesc.value;
+
+    if (eventTitle === "" || eventTime === "" || eventDesc === "") {
+        alert("Please fill all the fields");
+        return;
+    }
+
+    const timeArray = eventTime.split(":");
+    if (timeArray.length !== 2 || timeArray[0] > 23 || timeArray[1] > 59) {
+        alert("Invalid time");
+        return;
+    }
+});

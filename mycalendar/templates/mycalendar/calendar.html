@@ -49,29 +49,39 @@
 
             </div>
             <div class="add-event-wrapper">
-                <div class="add-event-header">
-                    <div class="title">Add Event</div>
-                    <i class="fas fa-times close"></i>
-                </div>
-                <div class="add-event-body">
-                    <div class="add-event-input">
-                        <input type="text" class="event-name" placeholder="Event Name" />
+                <form action="{% url 'addEvent' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="add-event-header">
+                        <div class="title">Add Event</div>
+                        <i class="fas fa-times close"></i>
                     </div>
-                    <div class="add-event-input">
-                        <input type="text" class="event-time" placeholder="Event Time" />
+                    <div class="add-event-body">
+                        <div class="add-event-input">
+                            <input type="text" class="input-event-name" name="title" placeholder="Event Name" />
+                        </div>
+                        <div class="add-event-input">
+                            <input type="text" class="input-event-date" name="date" value=""/>
+                        </div>
+                        <div class="add-event-input">
+                            <input type="text" class="input-event-time" name="time" placeholder="Event Time" />
+                        </div>
+                        <div class="add-event-input">
+                            <input type="text" class="input-event-desc" name="description" placeholder="Description" />
+                        </div>
                     </div>
-                    <div class="add-event-input">
-                        <input type="text" class="event-description" placeholder="Description" />
+                    <div class="add-event-footer">
+                        <button class="add-event-btn">Add Event</button>
                     </div>
-                </div>
-                <div class="add-event-footer">
-                    <button class="add-event-btn">Add Event</button>
-                </div>
+                </form>
             </div>
         </div>
         <button class="add-event">
             <i class="fas fa-plus"></i>
         </button>
     </div>
+    <script type="text/javascript">
+        const eventsArray = {{ events_json|safe }};
+        console.log(`${eventsArray}`);
+    </script>
     <script src="{% static 'mycalendar/script.js' %}"></script>
 {% endblock %}

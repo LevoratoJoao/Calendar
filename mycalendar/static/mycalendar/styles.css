@@ -331,6 +331,13 @@
     color: #333333;
 }
 
+.events .event .event-desc {
+    font-weight: 400;
+    color: #fff;
+    margin-left: 15px;
+    pointer-events: none;
+}
+
 .events .event .event-time {
     font-weight: 400;
     color: #a2a3b4;
@@ -420,7 +427,7 @@
 }
 
 .add-event-wrapper.active {
-    max-height: 300px;
+    max-height: 400px;
 }
 
 .add-event-header {
