@@ -269,6 +269,8 @@ function getActiveDay(date) {
     eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
+
+
 // Show the events of the active day
 function updateEvents(date) {
     let events = "";
@@ -277,23 +279,65 @@ function updateEvents(date) {
             event.events.forEach((event) => {
                 if (event.completed === true) {
                     events += `
-                        <div class="event" id="${event.id}" onclick="completeEvent(${event.id})" style="text-decoration: line-through;">`;
+                        <div class="event" id="${event.id}" data-event-id="${event.id}" style="text-decoration: line-through;" data-toggle="modal" data-target="#myModal-${event.id}">`;
                 } else {
                     events += `
-                        <div class="event" id="${event.id}" onclick="completeEvent(${event.id})">`;
+                        <div class="event" id="${event.id}" data-event-id="${event.id}" data-toggle="modal" data-target="#myModal-${event.id}">`;
                 }
                 events += `
                     <div class="title">
                         <i class="fas fa-circle"></i>
                         <h3 class="event-title">${event.title}</h3>
                     </div>
-                    <div class="event-desc">
-                        <span class="event-desc">${event.description}</span>
-                    </div>
+
                     <div class="event-time">
                         <span class="event-time">${event.time}</span>
                     </div>
+
+                    <div class="modal fade" id="myModal-${event.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">${event.title}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="add-event-body">
+                                        <div class="add-event-input">
+                                            <input type="text" class="input-event-name" name="title" placeholder="Event Name" value="${event.title}"/>
+                                        </div>
+                                        <div class="add-event-input">
+                                            <input type="text" class="input-event-date" name="date" value="${activeDay}/${month + 1}/${year}"/>
+                                        </div>
+                                        <div class="add-event-input">
+                                            <input type="text" class="input-event-time" name="time" placeholder="Event Time" value="${event.time}"/>
+                                        </div>
+                                        <div class="add-event-input">
+                                            <input type="text" class="input-event-desc" name="description" placeholder="Description" value="${event.description}"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-success" onclick="completeEvent(${event.id})">Complete event</button>
+                                    <button type="button" class="btn btn-primary">Edit event</button>
+                                    <button type="button" class="btn btn-danger">Delete event</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>`;
+                $(document).ready(function() {
+                    // Prevent modal from closing when clicking inside .modal-content
+                    $(`#myModal-${event.id}`).on('click', '.modal-content', function(event) {
+                        event.stopPropagation(); // This stops the click event from propagating to the parent
+                    });
+                });
             });
         }
     });

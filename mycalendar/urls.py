@@ -10,4 +10,6 @@ urlpatterns = [
 
     # API Routes
     path("complete-event/<int:date_id>", views.completeEvent, name="completeEvent"),
+    path("delete-event/<int:date_id>", views.deleteEvent, name="deleteEvent"),
+    path("edit-event/<int:date_id>", views.editEvent, name="editEvent"),
 ]
