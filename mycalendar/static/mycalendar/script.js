@@ -12,16 +12,6 @@ const eventsContainer = document.querySelector(".events");
 const addEventSubmit = document.querySelector(".add-event-btn");
 const addEventDate = document.querySelector(".input-event-date");
 
-//const eventsDataElement = document.getElementById('events-data');
-//console.log(eventsDataElement.innerHTML.length);
-
-// if (eventsDataElement.innerHTML.length === 0) {
-//     const eventsArray = [];
-// } else {
-//     const eventsArray = JSON.parse(eventsDataElement.textContent);
-//     console.log(eventsArray);
-// }
-
 let today = new Date();
 let activeDay;
 let month = today.getMonth();
@@ -50,11 +40,6 @@ const months = [
 //         ]
 //     }
 // ];
-
-// Function to get the number of days in a month
-// function getDaysInMonth(month, year) {
-//     return new Date(year, month, 0).getDate();
-// }
 
 function initCalendar() { // Function to initialize the calendar
     console.log(eventsArray);
@@ -290,8 +275,14 @@ function updateEvents(date) {
     eventsArray.forEach((event) => {
         if (date === event.day && month + 1 === event.month && year === event.year) {
             event.events.forEach((event) => {
+                if (event.completed === true) {
+                    events += `
+                        <div class="event" id="${event.id}" onclick="completeEvent(${event.id})" style="text-decoration: line-through;">`;
+                } else {
+                    events += `
+                        <div class="event" id="${event.id}" onclick="completeEvent(${event.id})">`;
+                }
                 events += `
-                <div class="event">
                     <div class="title">
                         <i class="fas fa-circle"></i>
                         <h3 class="event-title">${event.title}</h3>
@@ -332,3 +323,17 @@ addEventSubmit.addEventListener("click", () => {
         return;
     }
 });
+
+function completeEvent(id) {
+    fetch(`/complete-event/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            id: id
+        })
+    })
+    .then((response) => response.json())
+    .then(date => {
+        console.log(date);
+        window.location.reload();
+    });
+};

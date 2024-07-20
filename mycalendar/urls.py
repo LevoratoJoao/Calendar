@@ -9,5 +9,5 @@ urlpatterns = [
     path('addEvent', views.addEvent, name='addEvent'),
 
     # API Routes
-    #path('calendar', views.calendar, name='calendar')
+    path("complete-event/<int:date_id>", views.completeEvent, name="completeEvent"),
 ]

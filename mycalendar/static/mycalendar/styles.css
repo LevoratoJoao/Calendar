@@ -372,6 +372,10 @@
     content: "\f00d";
 }
 
+.events .event .completed {
+    text-decoration: line-through;
+}
+
 .events .event:hover::after {
     display: flex;
 }

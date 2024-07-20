@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout
@@ -8,13 +8,14 @@ from django.contrib.auth.decorators import login_required
 from .models import User, Date, Event
 
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
 def index(request):
     # Authenticated users view their inbox
     if request.user.is_authenticated:
-        days = Date.objects.all()
+        days = Date.objects.filter(user=request.user)
         day_events = json.dumps([day.serialize() for day in days])
         return render(request, 'mycalendar/calendar.html', {
             "events_json": day_events
@@ -86,14 +87,28 @@ def addEvent(request):
         time = request.POST["time"]
         description = request.POST["description"]
         user = request.user
-        print(f"Date: {date}")
-        print(f"Time: {time}")
-        event = Event.objects.create(user=user, title=title, time=time, description=description)
+        event = Event.objects.create(title=title, time=time, description=description)
         event.save()
 
         day, month, year = splitDate(date)
 
-        day = Date.objects.create(day=day, month=month, year=year, events=event)
+        day = Date.objects.create(user=user, day=day, month=month, year=year, events=event)
         day.save()
         return HttpResponseRedirect(reverse("index"))
     return render(request, 'mycalendar/calendar.html')
+
+@csrf_exempt
+def completeEvent(request, date_id):
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required"}, status=400)
+    try:
+        event = Event.objects.get(id=date_id)
+        if event.completed:
+            event.completed = False
+        else:
+            event.completed = True
+        event.save()
+        days = Date.objects.filter(events=event)
+        return JsonResponse({"day": days.get().day, "event": event.serialize(), "message": "Event completed"}, status=201)
+    except Date.DoesNotExist:
+        return JsonResponse({"error": "Date not found."}, status=404)

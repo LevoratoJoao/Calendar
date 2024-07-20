@@ -7,24 +7,19 @@ class User(AbstractUser):
     pass
 
 class Date(models.Model):
+    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="user", null=True)
     day = models.IntegerField(default=0)
     month = models.IntegerField(default=0)
     year = models.IntegerField(default=0)
     events = models.ForeignKey("Event", on_delete=models.CASCADE, related_name="dates", null=True)
 
     def __str__(self):
-        return f"{self.day}/{self.month}/{self.year} - {self.event} - {self.event.user.username}"
-
-    def serializeAllEvents(self):
-        events = []
-        for event in self.events:
-            aux = event.serialize()
-            events.append(aux)
-        return events
+        return f"{self.day}/{self.month}/{self.year} - {self.events}"
 
     def serialize(self):
         return {
             "id": self.id,
+            "user": self.user.username,
             "day": self.day,
             "month": self.month,
             "year": self.year,
@@ -32,14 +27,13 @@ class Date(models.Model):
         }
 
 class Event(models.Model):
-    user = models.ForeignKey("User", on_delete=models.CASCADE, related_name="events")
     title = models.CharField(max_length=100)
     time = models.TimeField(default="00:00")
     description = models.TextField(blank=True)
     completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.title} - {self.user.username} - {self.completed}"
+        return f"{self.title} - {self.description} - {self.completed}"
 
     def serialize(self):
         return {
