@@ -33,7 +33,7 @@ class Event(models.Model):
     completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.title} - {self.description} - {self.completed}"
+        return f"Title: {self.title}, time: {self.time}, desc: {self.description}"
 
     def serialize(self):
         return {

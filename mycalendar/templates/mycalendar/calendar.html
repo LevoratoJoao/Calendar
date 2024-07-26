@@ -7,11 +7,13 @@
 
     <a class="btn btn-sm btn-outline-primary" href="{% url 'logout' %}">Log Out</a>
 </div>
+<h4 class="error-message">{{ message }}</h4>
 <hr>
 {% endblock navbar %}
 
 {% block body %}
     <div class="container">
+
         <div class="left">
             <div class="calendar">
                 <div class="month">
@@ -53,20 +55,20 @@
                     {% csrf_token %}
                     <div class="add-event-header">
                         <div class="title">Add Event</div>
-                        <i class="fas fa-times close"></i>
+                        <i class="fas fa-times close" id="close"></i>
                     </div>
                     <div class="add-event-body">
                         <div class="add-event-input">
-                            <input type="text" class="input-event-name" name="title" placeholder="Event Name" />
+                            <input type="text" class="input-event-name" id="input-event-name" name="title" placeholder="Event Name" />
                         </div>
                         <div class="add-event-input">
-                            <input type="text" class="input-event-date" name="date" value=""/>
+                            <input type="text" class="input-event-date" id="input-event-date" name="date" value=""/>
                         </div>
                         <div class="add-event-input">
-                            <input type="text" class="input-event-time" name="time" placeholder="Event Time" />
+                            <input type="text" class="input-event-time" id="input-event-time" name="time" placeholder="Event Time" />
                         </div>
                         <div class="add-event-input">
-                            <input type="text" class="input-event-desc" name="description" placeholder="Description" />
+                            <input type="text" class="input-event-desc" id="input-event-desc" name="description" placeholder="Description" />
                         </div>
                     </div>
                     <div class="add-event-footer">

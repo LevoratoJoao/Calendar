@@ -168,26 +168,28 @@ function gotoDate() {
 // Add event
 const addEventBtn = document.querySelector(".add-event");
 const addEventContainer = document.querySelector(".add-event-wrapper");
-const addEventCloseBtn = document.querySelector(".close");
-const addEventTitle = document.querySelector(".input-event-name");
-const addEventTime = document.querySelector(".input-event-time");
-const addEventDesc = document.querySelector(".input-event-desc");
-
+const addEventCloseBtn = document.getElementById("close");
+const addEventTitle = document.getElementById("input-event-name");
+const addEventTime = document.getElementById("input-event-time");
+const addEventDesc = document.getElementById("input-event-desc");
 
 addEventBtn.addEventListener("click", () => { // Show the add event container
-    // addEventTitle.value = "";
-    // addEventTime.value = "";
-    // addEventDesc.value = "";
     addEventDate.setAttribute('value',`${activeDay}/${month + 1}/${year}`);
     addEventContainer.classList.toggle("active");
 });
 
 addEventCloseBtn.addEventListener("click", () => { // Close the add event container
+    addEventTitle.value = "";
+    addEventTime.value = "";
+    addEventDesc.value = "";
     addEventContainer.classList.remove("active");
 });
 
 document.addEventListener("click", (e) => { // Close the add event container if the user clicks outside it
     if (e.target !== addEventBtn && !addEventContainer.contains(e.target)) {
+        addEventTitle.value = "";
+        addEventTime.value = "";
+        addEventDesc.value = "";
         addEventContainer.classList.remove("active");
     }
 });
@@ -269,8 +271,6 @@ function getActiveDay(date) {
     eventDate.innerHTML = date + " " + months[month] + " " + year;
 }
 
-
-
 // Show the events of the active day
 function updateEvents(date) {
     let events = "";
@@ -308,29 +308,39 @@ function updateEvents(date) {
                                 <div class="modal-body">
                                     <div class="add-event-body">
                                         <div class="add-event-input">
-                                            <input type="text" class="input-event-name" name="title" placeholder="Event Name" value="${event.title}"/>
+                                            <input type="text" class="input-event-name" id="input-event-name-${event.id}" name="title" placeholder="Event Name" value="${event.title}"/>
                                         </div>
                                         <div class="add-event-input">
                                             <input type="text" class="input-event-date" name="date" value="${activeDay}/${month + 1}/${year}"/>
                                         </div>
                                         <div class="add-event-input">
-                                            <input type="text" class="input-event-time" name="time" placeholder="Event Time" value="${event.time}"/>
+                                            <input type="text" class="input-event-time" id="input-event-time-${event.id}" name="time" placeholder="Event Time" value="${event.time}"/>
                                         </div>
                                         <div class="add-event-input">
-                                            <input type="text" class="input-event-desc" name="description" placeholder="Description" value="${event.description}"/>
+                                            <input type="text" class="input-event-desc" id="input-event-desc-${event.id}" name="description" placeholder="Description" value="${event.description}"/>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-success" onclick="completeEvent(${event.id})">Complete event</button>
-                                    <button type="button" class="btn btn-primary" onclick="editEvent(${event.id})">Edit event</button>
-                                    <button type="button" class="btn btn-danger" onclick="deleteEvent(${event.id})">Delete event</button>
+                                <div class="modal-footer">`;
+                    if (event.completed === true) {
+                        events += `
+                                <button type="button" class="btn btn-secondary" onclick="completeEvent(${event.id})"><i class="fa-solid fa-square-xmark" style="font-size: 20px;"></i></button>
+                                `;
+                    } else {
+                        events += `
+                                <button type="button" class="btn btn-success" onclick="completeEvent(${event.id})"><i class="fa-regular fa-square-check" style="font-size: 20px; color: #ffffff;"></i></button>
+                                `;
+                    }
+                    events += `
+                                    <button type="button" class="btn btn-primary" onclick="editEvent(${event.id})"><i class="fa-solid fa-pen-to-square" style="font-size: 15px; color: #fff"></i></button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteEvent(${event.id})"><i class="fa-solid fa-trash-can" style="font-size: 15px;"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>`;
+
                 $(document).ready(function() {
                     // Prevent modal from closing when clicking inside .modal-content
                     $(`#myModal-${event.id}`).on('click', '.modal-content', function(event) {
@@ -349,23 +359,6 @@ function updateEvents(date) {
     }
     eventsContainer.innerHTML = events;
 }
-
-addEventSubmit.addEventListener("click", () => {
-    const eventTitle = addEventTitle.value;
-    const eventTime = addEventTime.value;
-    const eventDesc = addEventDesc.value;
-
-    if (eventTitle === "" || eventTime === "" || eventDesc === "") {
-        alert("Please fill all the fields");
-        return;
-    }
-
-    const timeArray = eventTime.split(":");
-    if (timeArray.length !== 2 || timeArray[0] > 23 || timeArray[1] > 59) {
-        alert("Invalid time");
-        return;
-    }
-});
 
 function completeEvent(id) {
     fetch(`/complete-event/${id}`, {
@@ -396,11 +389,11 @@ function deleteEvent(id) {
 }
 
 function editEvent(id) {
-    const eventTitle = addEventTitle.value;
-    const eventTime = addEventTime.value;
-    const eventDesc = addEventDesc.value;
+    const title = document.getElementById(`input-event-name-${id}`).value;
+    const time = document.getElementById(`input-event-time-${id}`).value;
+    const desc = document.getElementById(`input-event-desc-${id}`).value;
 
-    if (eventTitle === "" || eventTime === "" || eventDesc === "") {
+    if (title === "" || time === "" || desc === "") {
         alert("Please fill all the fields");
         return;
     }
@@ -410,7 +403,7 @@ function editEvent(id) {
             id: id,
             title: title,
             time: time,
-            description: description
+            description: desc
         })
     })
     .then((response) => response.json())

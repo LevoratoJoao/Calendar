@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -12,13 +13,19 @@ from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
-def index(request):
+def getDayEvents(username):
+    user = User.objects.get(username=username)
+    days = Date.objects.filter(user=user)
+    day_events = json.dumps([day.serialize() for day in days])
+    return day_events
+
+def index(request, message=""):
     # Authenticated users view their inbox
     if request.user.is_authenticated:
-        days = Date.objects.filter(user=request.user)
-        day_events = json.dumps([day.serialize() for day in days])
+        day_events = getDayEvents(request.user.username)
         return render(request, 'mycalendar/calendar.html', {
-            "events_json": day_events
+            "events_json": day_events,
+            "message": message
         })
     return HttpResponseRedirect(reverse('login'))
 
@@ -86,6 +93,19 @@ def addEvent(request):
         date = request.POST["date"]
         time = request.POST["time"]
         description = request.POST["description"]
+
+        if title == "" or time == "" or description == "":
+            return render(request, 'mycalendar/calendar.html', {
+                "events_json": getDayEvents(request.user.username),
+                "message": "Please fill in all fields"
+            })
+
+        if (time[0] > '2' and time[1] > '3') or (time[3] > '5') or len(time) != 5:
+            return render(request, 'mycalendar/calendar.html', {
+                "events_json": getDayEvents(request.user.username),
+                "message": "Invalid time format"
+            })
+
         user = request.user
         event = Event.objects.create(title=title, time=time, description=description)
         event.save()
@@ -131,7 +151,8 @@ def editEvent(request, event_id):
         event = Event.objects.get(id=event_id)
         data = json.loads(request.body)
         event.title = data.get("title", event.title)
-        event.time = data.get("time", event.time)
+        time = data.get("time", event.time)
+        event.time = datetime.strptime(time, "%H:%M").time()
         event.description = data.get("description", event.description)
         event.save()
         return JsonResponse({"event": event.serialize(), "message": "Event edited"}, status=201)
