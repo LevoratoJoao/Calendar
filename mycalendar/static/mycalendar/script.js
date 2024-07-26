@@ -175,9 +175,9 @@ const addEventDesc = document.querySelector(".input-event-desc");
 
 
 addEventBtn.addEventListener("click", () => { // Show the add event container
-    addEventTitle.value = "";
-    addEventTime.value = "";
-    addEventDesc.value = "";
+    // addEventTitle.value = "";
+    // addEventTime.value = "";
+    // addEventDesc.value = "";
     addEventDate.setAttribute('value',`${activeDay}/${month + 1}/${year}`);
     addEventContainer.classList.toggle("active");
 });
@@ -323,10 +323,9 @@ function updateEvents(date) {
                                 </div>
 
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                     <button type="button" class="btn btn-success" onclick="completeEvent(${event.id})">Complete event</button>
-                                    <button type="button" class="btn btn-primary">Edit event</button>
-                                    <button type="button" class="btn btn-danger">Delete event</button>
+                                    <button type="button" class="btn btn-primary" onclick="editEvent(${event.id})">Edit event</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteEvent(${event.id})">Delete event</button>
                                 </div>
                             </div>
                         </div>
@@ -376,8 +375,47 @@ function completeEvent(id) {
         })
     })
     .then((response) => response.json())
-    .then(date => {
-        console.log(date);
+    .then(event => {
+        console.log(event);
         window.location.reload();
     });
-};
+}
+
+function deleteEvent(id) {
+    fetch(`/delete-event/${id}`, {
+        method: 'DELETE',
+        body: JSON.stringify({
+            id: id
+        })
+    })
+    .then((response) => response.json())
+    .then(event => {
+        console.log(event);
+        window.location.reload();
+    });
+}
+
+function editEvent(id) {
+    const eventTitle = addEventTitle.value;
+    const eventTime = addEventTime.value;
+    const eventDesc = addEventDesc.value;
+
+    if (eventTitle === "" || eventTime === "" || eventDesc === "") {
+        alert("Please fill all the fields");
+        return;
+    }
+    fetch(`/edit-event/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+            id: id,
+            title: title,
+            time: time,
+            description: description
+        })
+    })
+    .then((response) => response.json())
+    .then(event => {
+        console.log(event);
+        window.location.reload();
+    });
+}

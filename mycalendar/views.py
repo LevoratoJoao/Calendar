@@ -98,17 +98,42 @@ def addEvent(request):
     return render(request, 'mycalendar/calendar.html')
 
 @csrf_exempt
-def completeEvent(request, date_id):
+def completeEvent(request, event_id):
     if request.method != "PUT":
         return JsonResponse({"error": "PUT request required"}, status=400)
     try:
-        event = Event.objects.get(id=date_id)
+        event = Event.objects.get(id=event_id)
         if event.completed:
             event.completed = False
         else:
             event.completed = True
         event.save()
-        days = Date.objects.filter(events=event)
-        return JsonResponse({"day": days.get().day, "event": event.serialize(), "message": "Event completed"}, status=201)
+        return JsonResponse({"event": event.serialize(), "message": "Event completed"}, status=201)
     except Date.DoesNotExist:
         return JsonResponse({"error": "Date not found."}, status=404)
+
+@csrf_exempt
+def deleteEvent(request, event_id):
+    if request.method != "DELETE":
+        return JsonResponse({"error": "DELETE request required"}, status=400)
+    try:
+        event = Event.objects.get(id=event_id)
+        event.delete()
+        return JsonResponse({"message": "Event deleted"}, status=201)
+    except Event.DoesNotExist:
+        return JsonResponse({"error": "Event not found."}, status=404)
+
+@csrf_exempt
+def editEvent(request, event_id):
+    if request.method != "PUT":
+        return JsonResponse({"error": "PUT request required"}, status=400)
+    try:
+        event = Event.objects.get(id=event_id)
+        data = json.loads(request.body)
+        event.title = data.get("title", event.title)
+        event.time = data.get("time", event.time)
+        event.description = data.get("description", event.description)
+        event.save()
+        return JsonResponse({"event": event.serialize(), "message": "Event edited"}, status=201)
+    except Event.DoesNotExist:
+        return JsonResponse({"error": "Event not found."}, status=404)
